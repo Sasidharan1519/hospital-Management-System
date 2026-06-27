@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System</title>
+    <style>
+        /* Basic styling to replace style.css and make the app readable */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container, .login-container, .dashboard {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        h1, h2, h3 {
+            color: #333;
+            text-align: center;
+        }
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .menu a {
+            display: block;
+            background: #e9ecef;
+            padding: 12px;
+            margin: 8px 0;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .menu a:hover {
+            background: #dee2e6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* State management class */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginView" class="view active">
+        <div class="login-container">
+            <h1>Hospital Management System</h1>
+            <h3>Intern ID: CITS3132</h3>
+            <h3>Name: LOGESWARI.C</h3>
+            <form onsubmit="event.preventDefault(); login();">
+                <input type="text" id="username" placeholder="Enter Username" required>
+                <input type="password" id="password" placeholder="Enter Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboardView" class="view">
+        <div class="dashboard">
+            <h1>Hospital Management System</h1>
+            <div class="menu">
+                <a href="#" onclick="switchView('patientView')">Patient Registration</a>
+                <a href="#" onclick="switchView('doctorView')">Doctor Management</a>
+                <a href="#" onclick="switchView('appointmentView')">Appointment Booking</a>
+                <a href="#" onclick="switchView('billingView')">Billing System</a>
+                <a href="#" onclick="switchView('reportView')">Reports</a>
+                <a href="#" onclick="logout()" style="background-color: #dc3545; color: white;">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="patientView" class="view">
+        <div class="container">
+            <h1>Patient Registration</h1>
+            <input type="text" id="pid" placeholder="Patient ID">
+            <input type="text" id="pname" placeholder="Patient Name">
+            <input type="number" id="age" placeholder="Age">
+            <input type="text" id="disease" placeholder="Disease">
+            <button onclick="addPatient()">Register Patient</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Disease</th>
+                    </tr>
+                </thead>
+                <tbody id="patientTable"></tbody>
+            </table>
+            <br>
+            <a class="back-link" onclick="switchView('dashboardView')">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div id="doctorView" class="view">
+        <div class="container">
+            <h1>Doctor Management</h1>
+            <input type="text" id="doctorName" placeholder="Doctor Name">
+            <input type="text" id="specialization" placeholder="Specialization">
+            <button onclick="addDoctor()">Add Doctor</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Doctor Name</th>
+                        <th>Specialization</th>
+                    </tr>
+                </thead>
+                <tbody id="doctorTable"></tbody>
+            </table>
+            <br>
+            <a class="back-link" onclick="switchView('dashboardView')">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div id="appointmentView" class="view">
+        <div class="container">
+            <h1>Appointment Booking</h1>
+            <p style="text-align: center; color: #666;">Schedule clinical appointments below.</p>
+            <input type="text" id="appointmentPatient" placeholder="Patient Name">
+            <input type="text" id="appointmentDoctor" placeholder="Doctor Name">
+            <input type="date" id="appointmentDate">
+            <button onclick="alert('Appointment Booked Successfully')">Book Appointment</button>
+            <br>
+            <a class="back-link" onclick="switchView('dashboardView')">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div id="billingView" class="view">
+        <div class="container">
+            <h1>Billing System</h1>
+            <input type="number" id="consultationFee" placeholder="Consultation Fee">
+            <input type="number" id="medicineFee" placeholder="Medicine Fee">
+            <button onclick="calculateBill()">Calculate Bill</button>
+            <h2 id="totalBill"></h2>
+            <br>
+            <a class="back-link" onclick="switchView('dashboardView')">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div id="reportView" class="view">
+        <div class="container">
+            <h1>Hospital Report</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Report Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Patient Records</td><td>Available</td></tr>
+                    <tr><td>Doctor Records</td><td>Available</td></tr>
+                    <tr><td>Appointments</td><td>Available</td></tr>
+                    <tr><td>Billing Reports</td><td>Available</td></tr>
+                </tbody>
+            </table>
+            <br>
+            <a class="back-link" onclick="switchView('dashboardView')">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        // SPA View Switcher Functionality
+        function switchView(viewId) {
+            // Hide all views
+            const views = document.querySelectorAll('.view');
+            views.forEach(view => view.classList.remove('active'));
+            
+            // Show requested view
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        // Login handling
+        function login() {
+            let user = document.getElementById("username").value;
+            let pass = document.getElementById("password").value;
+
+            if(user.trim() !== "" && pass.trim() !== "") {
+                alert("Login Successful!");
+                switchView('dashboardView');
+            } else {
+                alert("Please enter valid credentials.");
+            }
+        }
+
+        function logout() {
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+            switchView('loginView');
+        }
+
+        // Add Patient Form Handling
+        function addPatient(){
+            let pid = document.getElementById("pid").value;
+            let pname = document.getElementById("pname").value;
+            let age = document.getElementById("age").value;
+            let disease = document.getElementById("disease").value;
+
+            if(pid=="" || pname=="" || age=="" || disease==""){
+               alert("Fill all fields");
+               return;
+            }
+
+            let table = document.getElementById("patientTable");
+            let row = table.insertRow();
+
+            row.insertCell(0).innerHTML = pid;
+            row.insertCell(1).innerHTML = pname;
+            row.insertCell(2).innerHTML = age;
+            row.insertCell(3).innerHTML = disease;
+
+            alert("Patient Registered Successfully");
+            
+            // Clear inputs
+            document.getElementById("pid").value = "";
+            document.getElementById("pname").value = "";
+            document.getElementById("age").value = "";
+            document.getElementById("disease").value = "";
+        }
+
+        // Add Doctor Form Handling
+        function addDoctor(){
+            let doctorName = document.getElementById("doctorName").value;
+            let specialization = document.getElementById("specialization").value;
+
+            if(doctorName=="" || specialization==""){
+               alert("Fill all fields");
+               return;
+            }
+
+            let table = document.getElementById("doctorTable");
+            let row = table.insertRow();
+
+            row.insertCell(0).innerHTML = doctorName;
+            row.insertCell(1).innerHTML = specialization;
+
+            alert("Doctor Added Successfully");
+
+            // Clear inputs
+            document.getElementById("doctorName").value = "";
+            document.getElementById("specialization").value = "";
+        }
+
+        // Calculate Bill Logic
+        function calculateBill() {
+            let consultationFee = parseFloat(document.getElementById("consultationFee").value) || 0;
+            let medicineFee = parseFloat(document.getElementById("medicineFee").value) || 0;
+            
+            let total = consultationFee + medicineFee;
+            document.getElementById("totalBill").innerHTML = "Total Bill: $" + total.toFixed(2);
+        }
+    </script>
+</body>
+</html>
